@@ -1,0 +1,79 @@
+{
+  "//": "=======================================================================",
+  "//": "📱 MANIFEST.JSON - Progressive Web App Configuration",
+  "//": "=======================================================================",
+  "//": "",
+  "//": "PURPOSE:",
+  "//": "- Configures the YouTube Summarizer as a Progressive Web App (PWA)",
+  "//": "- Enables app-like experience on mobile devices and desktops", 
+  "//": "- Allows users to install the app from their browser",
+  "//": "- Defines app metadata, icons, and display preferences",
+  "//": "",
+  "//": "PWA FEATURES:",
+  "//": "- Standalone display mode (looks like native app)",
+  "//": "- Custom app icons for different device sizes",
+  "//": "- Theme colors for browser UI integration",
+  "//": "- Offline capability when combined with service worker",
+  "//": "- Add to home screen functionality",
+  "//": "",
+  "//": "INSTALLATION:",
+  "//": "- Users can install via browser 'Add to Home Screen' option",
+  "//": "- Works on Android, iOS, Windows, macOS, and Linux",
+  "//": "- Provides native app-like experience without app store",
+  "//": "=======================================================================",
+
+  "name": "YouTube AI Summarizer",
+  "short_name": "YT Summarizer", 
+  "description": "AI-powered YouTube video summarizer with advanced analytics and mind mapping",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1419",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "education", "entertainment"],
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192' fill='%23ffffff'%3E%3Cpath d='M96 12c46.392 0 84 37.608 84 84s-37.608 84-84 84-84-37.608-84-84 37.608-84 84-84zm-30 60l60 24-60 24V72z'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%23ffffff'%3E%3Cpath d='M256 32c123.712 0 224 100.288 224 224s-100.288 224-224 224-224-100.288-224-224 100.288-224 224-224zm-80 160l160 64-160 64V192z'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 568' fill='none'%3E%3Crect width='320' height='568' fill='%230f1419'/%3E%3Crect x='20' y='20' width='280' height='100' rx='10' fill='%234f46e5'/%3E%3Ctext x='160' y='75' text-anchor='middle' fill='white' font-family='Arial' font-size='16'%3EYouTube AI Summarizer%3C/text%3E%3C/svg%3E",
+      "sizes": "320x568",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "YouTube AI Summarizer Mobile View"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Quick Summarize",
+      "short_name": "Summarize",
+      "description": "Quickly summarize a YouTube video",
+      "url": "/?action=summarize",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/%3E%3C/svg%3E",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "display_override": ["window-controls-overlay", "standalone"],
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}

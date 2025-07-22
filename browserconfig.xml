@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+=======================================================================
+🌐 BROWSERCONFIG.XML - Microsoft Browser Configuration
+=======================================================================
+
+PURPOSE:
+- Configures Microsoft browsers (Edge, Internet Explorer) for PWA features
+- Defines Windows-specific tile icons and colors for Start Menu
+- Enables Windows integration for the YouTube Summarizer app
+- Provides Windows 10/11 live tile customization options
+
+FEATURES:
+- Custom tile icon for Windows Start Menu pinning
+- Brand color integration with Windows theme
+- Optimized icon scaling for different tile sizes
+- Windows notification and live tile support
+
+BROWSER SUPPORT:
+- Microsoft Edge (all versions)
+- Internet Explorer 11+ (legacy support)
+- Windows 10/11 PWA integration
+- Windows Store app-like experience
+
+TILE CUSTOMIZATION:
+- Square 150x150 tile with SVG icon
+- Brand purple color (#4f46e5) for tile background
+- Scalable vector graphics for crisp display
+- Consistent branding across Windows UI
+=======================================================================
+-->
+<browserconfig>
+    <msapplication>
+        <tile>
+            <!-- Windows tile icon (150x150) with YouTube play button design -->
+            <square150x150logo src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150' fill='%23ffffff'%3E%3Cpath d='M75 7.5c37.1 0 67.5 30.4 67.5 67.5s-30.4 67.5-67.5 67.5-67.5-30.4-67.5-67.5 30.4-67.5 67.5-67.5zm-24 48l48 19.2-48 19.2V55.5z'/%3E%3C/svg%3E"/>
+            <!-- Brand color for Windows tile background -->
+            <TileColor>#4f46e5</TileColor>
+        </tile>
+    </msapplication>
+</browserconfig>

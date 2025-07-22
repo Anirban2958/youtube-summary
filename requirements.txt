@@ -1,0 +1,52 @@
+# =======================================================================
+# 📋 REQUIREMENTS.TXT - Python Dependencies
+# =======================================================================
+#
+# PURPOSE:
+# - Defines all Python packages required to run the YouTube Summarizer
+# - Used by pip to install dependencies: pip install -r requirements.txt
+# - Ensures consistent environment across different deployments
+#
+# CORE DEPENDENCIES:
+# =======================================================================
+
+# YouTube Transcript API
+# - Extracts video transcripts from YouTube videos
+# - Supports multiple languages and automatic captions
+# - Handles subtitle timing and formatting
+youtube-transcript-api
+
+# Google Generative AI (Gemini)
+# - Google's Gemini AI integration for text summarization
+# - Provides advanced natural language processing capabilities
+# - Supports multiple AI models and response formats
+google-generativeai
+
+# Flask Web Framework
+# - Lightweight Python web framework for building APIs
+# - Handles HTTP requests and responses
+# - Provides routing, templating, and server functionality
+Flask
+
+# Flask-CORS (Cross-Origin Resource Sharing)
+# - Enables cross-origin requests between frontend and backend
+# - Required for browser-based applications
+# - Handles CORS headers and preflight requests
+Flask-Cors
+
+# Additional dependencies that may be automatically installed:
+# - requests (HTTP client library)
+# - urllib3 (HTTP library with connection pooling)
+# - certifi (SSL certificate verification)
+# - charset-normalizer (Character encoding detection)
+# - idna (Internationalized Domain Names)
+
+# =======================================================================
+# INSTALLATION INSTRUCTIONS:
+# =======================================================================
+# 1. Create virtual environment: python -m venv venv
+# 2. Activate virtual environment:
+#    - Windows: venv\Scripts\activate
+#    - macOS/Linux: source venv/bin/activate
+# 3. Install dependencies: pip install -r requirements.txt
+# =======================================================================

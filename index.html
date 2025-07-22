@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- 
+    =======================================================================
+    📄 INDEX.HTML - Main Application Interface
+    =======================================================================
+    
+    PURPOSE:
+    - Main HTML file that serves as the frontend interface for the YouTube Summarizer
+    - Contains the complete UI structure with modern glassmorphic design
+    - Implements Progressive Web App (PWA) features for mobile compatibility
+    - Provides responsive layout for desktop, tablet, and mobile devices
+    
+    KEY FEATURES:
+    - YouTube URL input and video details fetching
+    - AI-powered summarization with multiple styles
+    - Interactive statistics dashboard with animations
+    - Mind mapping visualization using D3.js
+    - Language selection and transcript analysis
+    - Download options for summaries (PDF, TXT, JSON)
+    - Dark/light theme support with modern gradients
+    
+    DEPENDENCIES:
+    - style.v2.css (Modern glassmorphic styling)
+    - script.v2.js (Frontend functionality and API calls)
+    - D3.js (Mind mapping visualization)
+    - Font Awesome (Icons)
+    - Google Fonts (Typography)
+    
+    PWA FEATURES:
+    - Manifest.json for app-like experience
+    - Service worker for offline functionality
+    - Meta tags for mobile optimization
+    - Theme colors and splash screens
+    =======================================================================
+    -->
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Summarizer</title>
+    
+    <!-- PWA Meta Tags for Mobile App Experience -->
+    <meta name="description" content="AI-powered YouTube video summarizer with advanced analytics and mind mapping">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="YT Summarizer">
+    <meta name="msapplication-TileColor" content="#4f46e5">
+    <meta name="msapplication-config" content="browserconfig.xml">
+    
+    <!-- PWA Manifest for App Installation -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- PWA Icons -->
+    <link rel="apple-touch-icon" sizes="192x192" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192' fill='%23ffffff'%3E%3Cpath d='M96 12c46.392 0 84 37.608 84 84s-37.608 84-84 84-84-37.608-84-84 37.608-84 84-84zm-30 60l60 24-60 24V72z'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234f46e5'%3E%3Cpath d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'/%3E%3C/svg%3E">
+    
+    <link rel="stylesheet" href="style.v2.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round"></div>
+        </label>
+    </div>
+    <div class="container">
+        <h1>YouTube Video Summarizer</h1>
+        <div class="input-container">
+            <input type="text" id="youtube-url" placeholder="Enter YouTube Video URL">
+            <button id="get-details-btn">Get Video Details</button>
+            <button id="clear-btn">Clear</button>
+        </div>
+
+        <div id="video-info" class="hidden">
+            <h2 id="video-title"></h2>
+            
+            <!-- Video Preview Section -->
+            <div class="video-preview" id="video-preview">
+                <h3>Video Preview</h3>
+                <div class="video-container">
+                    <iframe id="video-iframe" 
+                            width="560" 
+                            height="315" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+            
+            <div class="language-selector">
+                <label for="language-select">Transcript Language:</label>
+                <select id="language-select"></select>
+            </div>
+            
+            <!-- Advanced Options Toggle Button -->
+            <button id="toggle-advanced" class="toggle-btn">⚙️ Advanced Options</button>
+            
+            <!-- Advanced Options Panel -->
+            <div id="advanced-options" class="advanced-options hidden">
+                <h3>⚙️ Advanced Options</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <h4>📝 Summary Style</h4>
+                        <select id="summary-style">
+                            <option value="default">Default Summary</option>
+                            <option value="bullet-points">🔸 Bullet Points</option>
+                            <option value="paragraphs">📄 Paragraphs</option>
+                            <option value="qa">❓ Q&A Format</option>
+                            <option value="timeline">⏰ Timeline</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <h4>📏 Detail Level</h4>
+                        <select id="summary-length">
+                            <option value="brief">📋 Brief</option>
+                            <option value="medium" selected>📖 Medium</option>
+                            <option value="detailed">📚 Detailed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <h4>🔍 Analytics Features</h4>
+                        <div class="analytics-toggles">
+                            <div class="toggle-item">
+                                <input type="checkbox" id="sentiment-analysis" checked>
+                                <label for="sentiment-analysis">😊 Sentiment Analysis</label>
+                            </div>
+                            <div class="toggle-item">
+                                <input type="checkbox" id="topic-extraction" checked>
+                                <label for="topic-extraction">🏷️ Topic Extraction</label>
+                            </div>
+                            <div class="toggle-item">
+                                <input type="checkbox" id="speaker-detection">
+                                <label for="speaker-detection">👥 Speaker Detection</label>
+                            </div>
+                            <div class="toggle-item">
+                                <input type="checkbox" id="engagement-metrics">
+                                <label for="engagement-metrics">📊 Key Moments</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <h4>🌐 Translation</h4>
+                        <select id="translate-to">
+                            <option value="none">No Translation</option>
+                            <option value="es">🇪🇸 Spanish</option>
+                            <option value="fr">🇫🇷 French</option>
+                            <option value="de">🇩🇪 German</option>
+                            <option value="it">🇮🇹 Italian</option>
+                            <option value="pt">🇵🇹 Portuguese</option>
+                            <option value="ru">🇷🇺 Russian</option>
+                            <option value="ja">🇯🇵 Japanese</option>
+                            <option value="ko">🇰🇷 Korean</option>
+                            <option value="zh">🇨🇳 Chinese</option>
+                            <option value="ar">🇸🇦 Arabic</option>
+                            <option value="hi">🇮🇳 Hindi</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="summarize-btn">Summarize</button>
+        </div>
+
+        <div class="summary-container hidden" id="summary-section">
+            <div class="summary-header">
+                <h2>Summary</h2>
+                <div class="summary-controls">
+                    <button id="toggle-mindmap-btn" title="Toggle Mind Map View">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M12 1v6m0 6v6"></path>
+                            <path d="m21 12-6-3-6 3-6-3"></path>
+                        </svg>
+                        🧠 Mind Map
+                    </button>
+                    <button id="toggle-stats-btn" title="Toggle Statistics Dashboard">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 3v18h18"></path>
+                            <path d="m19 9-5 5-4-4-3 3"></path>
+                        </svg>
+                        📊 Statistics
+                    </button>
+                    <button id="voice-summary-btn" title="Enhanced Voice Controls">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5,6 9,2 9,2 15,6 15,11 19,11 5"></polygon>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.08"></path>
+                        </svg>
+                        🎙️ Voice
+                    </button>
+                    <button id="ask-question-btn" title="Ask Questions">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9,9a3,3,0,1,1,4,2.83V15"></path>
+                            <circle cx="12" cy="19" r="1"></circle>
+                        </svg>
+                        ❓ Ask AI
+                    </button>
+                    <button id="copy-btn" title="Copy to Clipboard">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-copy"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        📋 Copy
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Analytics Dashboard -->
+            <div id="analytics-dashboard" class="analytics-dashboard hidden">
+                <h3>📊 Video Analytics</h3>
+                <div class="analytics-grid">
+                    <div class="analytics-card sentiment-card">
+                        <h4>😊 Sentiment Analysis</h4>
+                        <div id="sentiment-result" class="analytics-content">
+                            <div class="sentiment-meter">
+                                <div class="sentiment-bar">
+                                    <div class="sentiment-fill" data-sentiment="neutral"></div>
+                                </div>
+                                <span id="sentiment-text">Analyzing...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card topics-card">
+                        <h4>🏷️ Key Topics</h4>
+                        <div id="topics-result" class="analytics-content">
+                            <div class="topics-tags" id="topics-tags">
+                                Extracting topics...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card speakers-card">
+                        <h4>👥 Speakers</h4>
+                        <div id="speakers-result" class="analytics-content">
+                            <div class="speakers-list" id="speakers-list">
+                                Detecting speakers...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card engagement-card">
+                        <h4>📊 Key Moments</h4>
+                        <div id="engagement-result" class="analytics-content">
+                            <div class="engagement-timeline" id="engagement-timeline">
+                                Analyzing engagement...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Summary Statistics Dashboard -->
+            <div id="stats-dashboard" class="stats-dashboard hidden">
+                <h3>📊 Summary Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>📝 Word Analysis</h4>
+                        <div class="stat-content">
+                            <div class="stat-item">
+                                <span class="stat-label">Total Words:</span>
+                                <span class="stat-value" id="total-words">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Unique Words:</span>
+                                <span class="stat-value" id="unique-words">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Average Word Length:</span>
+                                <span class="stat-value" id="avg-word-length">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4>⏱️ Reading Time</h4>
+                        <div class="stat-content">
+                            <div class="stat-item">
+                                <span class="stat-label">Estimated Reading Time:</span>
+                                <span class="stat-value" id="reading-time">0 min</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Speaking Time:</span>
+                                <span class="stat-value" id="speaking-time">0 min</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Sentences:</span>
+                                <span class="stat-value" id="sentence-count">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4>🧠 Complexity Score</h4>
+                        <div class="stat-content">
+                            <div class="complexity-meter">
+                                <div class="complexity-bar">
+                                    <div class="complexity-fill" id="complexity-fill"></div>
+                                </div>
+                                <span class="complexity-text" id="complexity-text">Calculating...</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Grade Level:</span>
+                                <span class="stat-value" id="grade-level">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4>📹 Video Efficiency</h4>
+                        <div class="stat-content">
+                            <div class="stat-item">
+                                <span class="stat-label">Video Duration:</span>
+                                <span class="stat-value" id="video-duration">Unknown</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Compression Ratio:</span>
+                                <span class="stat-value" id="compression-ratio">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Time Saved:</span>
+                                <span class="stat-value" id="time-saved">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Enhanced Voice Controls Panel -->
+            <div id="voice-controls-panel" class="voice-controls-panel hidden">
+                <h3>🎙️ Voice Settings</h3>
+                <div class="voice-controls-grid">
+                    <div class="voice-control-group">
+                        <label for="voice-select">🗣️ Voice:</label>
+                        <select id="voice-select" class="voice-select">
+                            <option value="auto">Auto Select</option>
+                        </select>
+                    </div>
+                    
+                    <div class="voice-control-group">
+                        <label for="speech-rate">⚡ Speed:</label>
+                        <div class="range-container">
+                            <input type="range" id="speech-rate" class="voice-range" min="0.5" max="2" step="0.1" value="1">
+                            <span id="rate-value" class="range-value">1.0x</span>
+                        </div>
+                    </div>
+                    
+                    <div class="voice-control-group">
+                        <label for="speech-pitch">🎵 Pitch:</label>
+                        <div class="range-container">
+                            <input type="range" id="speech-pitch" class="voice-range" min="0" max="2" step="0.1" value="1">
+                            <span id="pitch-value" class="range-value">1.0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="voice-control-group">
+                        <label for="speech-volume">🔊 Volume:</label>
+                        <div class="range-container">
+                            <input type="range" id="speech-volume" class="voice-range" min="0" max="1" step="0.1" value="1">
+                            <span id="volume-value" class="range-value">100%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="voice-actions">
+                    <button id="play-voice-btn" class="voice-action-btn primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="5 3,19 12,5 21"></polygon>
+                        </svg>
+                        Play
+                    </button>
+                    <button id="pause-voice-btn" class="voice-action-btn secondary" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="6" y="4" width="4" height="16"></rect>
+                            <rect x="14" y="4" width="4" height="16"></rect>
+                        </svg>
+                        Pause
+                    </button>
+                    <button id="stop-voice-btn" class="voice-action-btn secondary" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        </svg>
+                        Stop
+                    </button>
+                    <button id="test-voice-btn" class="voice-action-btn secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 12l2 2 4-4"></path>
+                            <circle cx="12" cy="12" r="10"></circle>
+                        </svg>
+                        Test Voice
+                    </button>
+                </div>
+                
+                <div class="voice-progress">
+                    <div class="progress-bar">
+                        <div id="voice-progress-fill" class="progress-fill"></div>
+                    </div>
+                    <div class="progress-info">
+                        <span id="progress-text">Ready to play</span>
+                        <span id="progress-time">0:00 / 0:00</span>
+                    </div>
+                </div>
+                
+                <div class="voice-features">
+                    <div class="feature-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="highlight-text" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <label for="highlight-text">✨ Highlight text while reading</label>
+                    </div>
+                    <div class="feature-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="voice-notifications" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <label for="voice-notifications">🔔 Voice completion notifications</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question Panel -->
+            <div id="question-panel" class="question-panel hidden">
+                <h3>❓ Ask Questions About the Video</h3>
+                <div class="question-input-container">
+                    <input type="text" id="question-input" placeholder="Ask anything about the video content..." />
+                    <button id="submit-question-btn">Ask</button>
+                </div>
+                <div id="qa-history" class="qa-history">
+                    <div class="qa-example">
+                        <p><strong>💡 Example questions:</strong></p>
+                        <div class="example-questions">
+                            <button class="example-q" data-question="What are the main points discussed?">What are the main points?</button>
+                            <button class="example-q" data-question="Can you summarize this in 3 bullet points?">Summarize in 3 points</button>
+                            <button class="example-q" data-question="What solutions were mentioned?">What solutions were mentioned?</button>
+                            <button class="example-q" data-question="Who are the target audience?">Who is the target audience?</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="loader" id="loader"></div>
+            
+            <!-- Summary Text View -->
+            <div id="summary-text-view">
+                <p id="summary-text"></p>
+            </div>
+            
+            <!-- Mind Map View -->
+            <div id="mindmap-view" class="hidden">
+                <div class="mindmap-controls">
+                    <button id="reset-zoom-btn" title="Reset View">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                            <path d="M21 3v5h-5"/>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                            <path d="M3 21v-5h5"/>
+                        </svg>
+                        Reset View
+                    </button>
+                    <button id="export-mindmap-btn" class="export-btn-mindmap" title="Export Mind Map as PNG">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7,10 12,15 17,10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        📥 Export
+                    </button>
+                </div>
+                <div class="mindmap-layout">
+                    <div id="mindmap-container"></div>
+                    <div id="overview-panel" class="overview-panel">
+                        <h3>📊 Overview Details</h3>
+                        <div id="overview-content">
+                            <p>👆 Click on any node in the mind map to see detailed information here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.simple.js"></script>
+</body>
+</html>
